@@ -1,6 +1,6 @@
 {
   "name": "alifc",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Minimal aliyun fc util",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,15 @@
     "type": "git",
     "url": "https://github.com/clarkttfu/alifc.git"
   },
+  "eslintConfig": {
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "standard"
+    ]
+  },
   "devDependencies": {
-    "axios": "^0.21.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.13.0",
     "eslint-config-standard": "^16.0.1",
@@ -29,12 +36,8 @@
     "tap-nyc": "^1.0.3",
     "tape": "^5.0.1"
   },
-  "eslintConfig": {
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "standard"
-    ]
+  
+  "dependencies": {
+    "axios": "^0.21.0"
   }
 }
