@@ -1,0 +1,40 @@
+{
+  "name": "alifc",
+  "version": "0.1.0",
+  "description": "Minimal aliyun fc util",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc tape test/**.js | tap-nyc"
+  },
+  "keywords": [
+    "aliyun",
+    "fc"
+  ],
+  "author": "clarkttfu@gmail.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clarkttfu/alifc.git"
+  },
+  "devDependencies": {
+    "axios": "^0.21.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.13.0",
+    "eslint-config-standard": "^16.0.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.1.0",
+    "nyc": "^14.1.1",
+    "tap-nyc": "^1.0.3",
+    "tape": "^5.0.1"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "standard"
+    ]
+  }
+}
