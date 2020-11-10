@@ -8,7 +8,7 @@ npm i alifc
 
 ## Usage
 
-HttpFc is a just a wrapper of axios
+HttpFc is a wrapper of aixos but sign the authorization header for you
 
 ```
 const { HttpFc } = require('alifc')
