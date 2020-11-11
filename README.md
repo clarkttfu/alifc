@@ -1,7 +1,7 @@
 Minimal Aliyun FC Utility
 ===
 
-For those who merely need a http trigger client.
+For those who prefer a simpler http client than @alicloud/fc2.
 
 ## Install
 ```
