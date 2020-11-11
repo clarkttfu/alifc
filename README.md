@@ -1,7 +1,7 @@
 Minimal Aliyun FC Utility
 ===
 
-For those who merely need a http trigger invoker.
+For those who merely need a http trigger client.
 
 ## Install
 ```
@@ -10,8 +10,8 @@ npm i alifc
 
 ## Usage
 
-HttpBase is wrapper of aixos that build aliyun fc headers for you, see buildHeaders method
-HttpFunc also sign the request to pass function Authorization 
+HttpBase is wrapper of aixos that set the '/version/proxy/' baseURL for you.  
+HttpFunc also sign the request to pass function Authorization.
 
 ```
 const { HttpBase, HttpFunc } = require('alifc')
