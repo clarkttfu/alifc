@@ -15,12 +15,25 @@ HttpFunc also sign the request to pass function Authorization
 
 ```
 const { HttpBase, HttpFunc } = require('alifc')
-const httpFc = new HttpFc(
+const func = new HttpFunc(
   accessKey,
   accessKeySecret
   endpoint
 )
+
+func.get('/service/func') // axios Promise
 ```
+
+## Test requirements
+
+- A fc service named 'test'
+- 2 functions under 'test:
+  - foo: which use function authorization
+  - bar: which accept anonymous request
+- 3 environment variables (or set them via .env):
+  - FC_ACCESS_KEY: accessKey,
+  - FC_ACCESS_KEY_SEC: accessKeySecret,
+  - FC_ACCESS_EP: endpoint
 
 ## Reference
 
