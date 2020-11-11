@@ -16,7 +16,7 @@ const kHost = Symbol('host')
 const kAliDomain = Symbol('aliDomain')
 
 class HttpBase {
-  constructor (accessKey, accessKeySecret, endpointOpts) {
+  constructor (endpointOpts) {
     const { accountid, endpoint, host, alidomain } = parseOptions(endpointOpts)
 
     this[kHost] = host
@@ -24,9 +24,6 @@ class HttpBase {
     this[kAliDomain] = alidomain
     this[kAccountid] = accountid
     this[kEndpoint] = endpoint
-
-    assert(this[kAccessKey] = accessKey, 'accessKey is required')
-    assert(this[kAccessKeySec] = accessKeySecret, 'accessKeySecret is required')
   }
 
   get version () {
@@ -101,6 +98,12 @@ class HttpBase {
 }
 
 class HttpFunc extends HttpBase {
+  constructor (accessKey, accessKeySecret, endpointOpts) {
+    super(endpointOpts)
+    assert(this[kAccessKey] = accessKey, 'accessKey is required')
+    assert(this[kAccessKeySec] = accessKeySecret, 'accessKeySecret is required')
+  }
+
   get requireSignature () {
     return true
   }

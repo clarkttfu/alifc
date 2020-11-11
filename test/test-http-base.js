@@ -4,16 +4,14 @@ const { HttpBase } = require('../index.js')
 require('dotenv').config()
 
 const {
-  FC_ACCESS_KEY: accessKey,
-  FC_ACCESS_KEY_SEC: accessKeySecret,
   FC_ACCESS_EP: endpoint
 } = process.env
 
-const httpBase = new HttpBase(accessKey, accessKeySecret, endpoint)
+const httpBase = new HttpBase(endpoint)
 
 test('HttpBase constructor', t => {
   t.ok(httpBase, 'constructor')
-  t.equal(httpBase.accessKey, accessKey)
+  t.equal(httpBase.accessKey, undefined)
   t.end()
 })
 
