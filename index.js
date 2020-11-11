@@ -3,28 +3,30 @@
 const assert = require('assert')
 const crypto = require('crypto')
 const axios = require('axios')
-const helper = require('./helper')
 
-const kAxios = Symbol('axios')
+const helper = require('./helper')
+const { parseAccountid, parseOptions } = require('./parser')
+
+const kEndpoint = Symbol('endpoint')
 const kAccessKeySec = Symbol('accessKeySecret')
 const kAccessKey = Symbol('accessKey')
 const kAccountid = Symbol('accountid')
-const kHost = Symbol('host')
 const kVersion = Symbol('version')
+const kHost = Symbol('host')
+const kAliDomain = Symbol('aliDomain')
 
-class HttpFc {
+class HttpBase {
   constructor (accessKey, accessKeySecret, endpointOpts) {
-    const { accountid, axiosOptions, endpoint, host } = parseOptions(endpointOpts)
+    const { accountid, endpoint, host, alidomain } = parseOptions(endpointOpts)
 
-    this[kVersion] = '2016-08-15'
-    this[kAccountid] = accountid
     this[kHost] = host
+    this[kVersion] = '2016-08-15'
+    this[kAliDomain] = alidomain
+    this[kAccountid] = accountid
+    this[kEndpoint] = endpoint
+
     assert(this[kAccessKey] = accessKey, 'accessKey is required')
     assert(this[kAccessKeySec] = accessKeySecret, 'accessKeySecret is required')
-
-    this[kAxios] = Object.assign(axiosOptions, {
-      baseURL: `${endpoint}/${this[kVersion]}/`
-    })
   }
 
   get version () {
@@ -35,28 +37,47 @@ class HttpFc {
     return this[kAccessKey]
   }
 
+  get requireSignature () {
+    return false
+  }
+
+  buildHeaders (headers) {
+    const now = new Date()
+    const fcHeaders = {
+      accept: 'application/json',
+      date: now.toUTCString(),
+      host: this[kHost],
+      'user-agent': `Node.js(${process.version}) OS(${process.platform}/${process.arch})`,
+      'x-fc-account-id': this[kAccountid]
+    }
+    return Object.assign(fcHeaders, headers)
+  }
+
   request (method, path, data, axiosConfig = {}) {
+    const isAlidomain = this[kAliDomain]
+    const url = assertPath(path, this.version, isAlidomain)
+    method = assertMethod(method)
+
+    let queries = null
+    if (isAlidomain) {
+      queries = axiosConfig.params || {}
+    }
+
     const headers = this.buildHeaders(axiosConfig.headers)
-    if (!path.startsWith('/')) {
-      path = '/' + path
+    if (this.requireSignature) {
+      headers.authorization = signRequest(
+        this[kAccessKey],
+        this[kAccessKeySec],
+        method, url, headers, queries
+      )
     }
 
-    let queriesToSign = null
-    if (path.startsWith('/proxy/')) {
-      queriesToSign = axiosConfig.params || {}
-    }
-    const auth = signRequest(
-      this[kAccessKey],
-      this[kAccessKeySec],
-      method, `/${this.version}${path}`, headers, queriesToSign
-    )
-    headers.authorization = auth
-
-    const config = Object.assign({}, this[kAxios], axiosConfig, {
+    const config = Object.assign({}, axiosConfig, {
       method,
-      url: path,
+      url,
+      baseURL: this[kEndpoint],
       headers,
-      params: queriesToSign
+      params: queries
     })
 
     return axios.request(config)
@@ -77,22 +98,17 @@ class HttpFc {
   put (url, data, config) {
     return this.request('PUT', url, data, config)
   }
+}
 
-  buildHeaders (headers) {
-    const now = new Date()
-    const fcHeaders = {
-      accept: 'application/json',
-      date: now.toUTCString(),
-      host: this[kHost],
-      'user-agent': `Node.js(${process.version}) OS(${process.platform}/${process.arch}) SDK`,
-      'x-fc-account-id': this[kAccountid]
-    }
-    return Object.assign(fcHeaders, headers)
+class HttpFunc extends HttpBase {
+  get requireSignature () {
+    return true
   }
 }
 
 module.exports = {
-  HttpFc,
+  HttpBase,
+  HttpFunc,
   parseAccountid,
   parseOptions
 }
@@ -118,46 +134,25 @@ function signString (source, secret) {
   return buff.toString('base64')
 }
 
-function parseOptions (endpointOptions) {
-  if (typeof endpointOptions === 'object') {
-    const url = new URL(endpointOptions.endpoint)
-    if (/[0-9]{6,20}/.test(endpointOptions.accountid)) {
-      assert(url, 'endpoint is not valid url')
-      const res = {
-        host: url.host,
-        accountid: endpointOptions.accountid,
-        endpoint: endpointOptions.endpoint
-      }
-      delete endpointOptions.endpoint
-      delete endpointOptions.accountid
-      res.axiosOptions = endpointOptions
-      return res
-    } else {
-      const accountid = parseAccountid(endpointOptions.endpoint)
-      const res = {
-        host: url.host,
-        accountid,
-        endpoint: endpointOptions.endpoint
-      }
-      delete endpointOptions.endpoint
-      res.axiosOptions = endpointOptions
-      return res
-    }
-  }
-
-  const url = new URL(endpointOptions)
-  const accountid = parseAccountid(endpointOptions)
-  return {
-    host: url.host,
-    accountid,
-    endpoint: endpointOptions,
-    axiosOptions: {}
+function assertMethod (method) {
+  const supported = [
+    'get', 'delete', 'post', 'put',
+    'GET', 'DELETE', 'POST', 'PUT'
+  ]
+  if (supported.includes(method)) {
+    return method.toUpperCase()
   }
 }
 
-function parseAccountid (url) {
-  const regex = /^(http|https):\/\/([0-9]{6,20})\.([a-z]{2}-[a-z]{2,}(-[1-9])?)(-internal)?\.fc.aliyuncs.com$/
-  const match = regex.exec(url)
-  assert(match, `invalid endpoint url: ${url}`)
-  return match[2] // accountid
+function assertPath (path, version, isAlidomain = true) {
+  assert(typeof path === 'string' && path.startsWith('/'))
+
+  if (isAlidomain) {
+    if (path.startsWith('/proxy/')) {
+      return `/${version}${path}`
+    } else {
+      return `/${version}/proxy${path}`
+    }
+  }
+  return path
 }
