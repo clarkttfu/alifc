@@ -1,10 +1,10 @@
 {
   "name": "alifc",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Minimal aliyun fc util",
   "main": "index.js",
   "scripts": {
-    "test": "nyc tape test/**.js | tap-nyc"
+    "test": "nyc tape test/**.js | tap-spec"
   },
   "keywords": [
     "axios",
@@ -37,10 +37,9 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.1.0",
     "nyc": "^14.1.1",
-    "tap-nyc": "^1.0.3",
+    "tap-spec": "^5.0.0",
     "tape": "^5.0.1"
   },
-  
   "dependencies": {
     "axios": "^0.21.0"
   }
