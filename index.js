@@ -5,7 +5,7 @@ const crypto = require('crypto')
 const axios = require('axios')
 
 const helper = require('./helper')
-const { parseAccountid, parseOptions } = require('./parser')
+const { parseOptions } = require('./parser')
 
 const kEndpoint = Symbol('endpoint')
 const kAccessKeySec = Symbol('accessKeySecret')
@@ -16,6 +16,9 @@ const kHost = Symbol('host')
 const kAliDomain = Symbol('aliDomain')
 
 class HttpBase {
+  /**
+   * @param {String|Object} endpointOpts
+   */
   constructor (endpointOpts) {
     const { accountid, endpoint, host, alidomain } = parseOptions(endpointOpts)
 
@@ -111,9 +114,7 @@ class HttpFunc extends HttpBase {
 
 module.exports = {
   HttpBase,
-  HttpFunc,
-  parseAccountid,
-  parseOptions
+  HttpFunc
 }
 
 /**

@@ -11,9 +11,17 @@ const rgxAccountid = /([0-9]{6,20})/
 const rgxRegion = /([a-z]{2}-[a-z]{2,}(?:-[1-9])?)/
 
 /**
+ * @typedef {Object} EndpointOptions
+ * @property {String} endpoint
+ * @property {String} accountid?
+ * @property {String} host?
+ * @property {Boolean} alidomain?
+ */
+
+/**
  * Parse endpoint string or axiosConfig object with endpoint/accountid field.
- * @param {String|Object} endpointOptions
- * @returns {Object} { host, accoundid, endpoint }
+ * @param {EndpointOptions|String} endpointOptions
+ * @returns {EndpointOptions} { host, alidomain, accoundid, endpoint }
  */
 function parseOptions (endpointOptions) {
   if (typeof endpointOptions === 'object') {
@@ -67,6 +75,10 @@ function parseEndpoint (url) {
   }
 }
 
+/**
+ * @param {String} url
+ * @returns {Boolean}
+ */
 function isAlidomain (url) {
   return typeof url === 'string' && url.endsWith(domain)
 }
