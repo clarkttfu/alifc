@@ -1,6 +1,6 @@
 {
   "name": "alifc",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Minimal aliyun fc util",
   "main": "index.js",
   "scripts": {
@@ -27,22 +27,24 @@
     "extends": [
       "standard"
     ],
-    "ignorePatterns": ["*.d.ts"]
+    "ignorePatterns": [
+      "*.d.ts"
+    ]
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
-    "eslint": "^7.13.0",
+    "eslint": "^8.17.0",
     "eslint-config-standard": "^16.0.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.1.0",
-    "nyc": "^14.1.1",
+    "nyc": "^15.1.0",
     "tap-spec": "^5.0.0",
     "tape": "^5.0.1",
     "typescript": "^4.1.2"
   },
   "dependencies": {
-    "axios": "^0.21.0"
+    "axios": "^0.27.2"
   }
 }
